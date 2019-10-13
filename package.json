@@ -11,6 +11,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "knex": "^0.19.5",
+    "mustache": "^3.1.0",
     "pg": "^7.12.1"
   }
 }
