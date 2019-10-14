@@ -10,7 +10,6 @@ const mustache = require('mustache')    //for templating
 // -----------------------------------------------------------------------------
 // OAuthorization
 require('dotenv').config() //to hide keys
-console.log(process.env)
 
 const session = require('express-session')
 const passport = require('passport')
