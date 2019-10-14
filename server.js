@@ -9,12 +9,13 @@ const mustache = require('mustache')    //for templating
 
 // -----------------------------------------------------------------------------
 // OAuthorization
+require('dotenv').config() //to hide keys
+console.log(process.env)
 
 const session = require('express-session')
 const passport = require('passport')
 const GitHubStrategy = require('passport-github').Strategy
 
-require('dotenv').config() //to hide keys
 
 
 app.set('trust proxy', 1) // trust first proxy
@@ -40,8 +41,6 @@ passport.deserializeUser(function(obj, cb) {
 });
 
 //GITHUB
-
-
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
