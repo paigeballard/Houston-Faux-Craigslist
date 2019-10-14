@@ -2,17 +2,24 @@
   "name": "houston-faux-craigslist",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "faker": "^4.1.0",
+
+    "express-session": "^1.17.0",
+
     "knex": "^0.19.5",
+    "mustache": "^3.1.0",
     "nodemon": "^1.19.3",
+    "passport": "^0.4.0",
+    "passport-github": "^1.1.0",
     "pg": "^7.12.1"
   }
 }
