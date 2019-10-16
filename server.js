@@ -119,13 +119,13 @@ app.listen(port, function () {
 
 // HTML Rendering
 
-// function renderListing (listing) {
-//   return `<li><a href="#">${allListings.rows.sale_item}</a></li>`
-// }
+function renderListing (listing) {
+  return `<li><a href="#">${allListings.rows.sale_item}</a></li>`
+}
 
-// function renderAllListings (allListings) {
-//   return '<ul>' + allListings.map(renderListing).join('') + '</ul>'
-// }
+function renderAllListings (allListings) {
+  return '<ul>' + allListings.map(renderListing).join('') + '</ul>'
+}
 
 // Database Queries
 
