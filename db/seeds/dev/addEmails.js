@@ -4,13 +4,16 @@ const createFakeUser = () => ({
   email: faker.internet.email(),
 });
 
-exports.seed = async function(knex, Promise) {
+exports.seed = function(knex) {
   // users
-  const fakeUsers = [];
-  const desiredFakeUsers = 500;
+  return knex('users').del()
+    .then(function () {
+      const fakeUsers = [];
+  const desiredFakeUsers = 100;
   for (let i = 0; i < desiredFakeUsers; i++) {
     fakeUsers.push(createFakeUser());
   }
-  await knex("users")
+  return knex("users")
     .insert(fakeUsers)
+    })
 };
