@@ -6,12 +6,8 @@ const port = 3000;
 const login = require('./login.js')     //for login
 const fs = require('fs')                //for templating
 const mustache = require('mustache')    //for templating
-const bodyParser = require('body-parser')
-const cors = require('cors')
 
-app.use(cors())
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(express.urlencoded())
+
 // -----------------------------------------------------------------------------
 // OAuthorization
 require('dotenv').config() //to hide keys
@@ -123,13 +119,13 @@ app.listen(port, function () {
 
 // HTML Rendering
 
-function renderListing (listing) {
-  return `<li><a href="#">${allListings.rows.sale_item}</a></li>`
-}
+// function renderListing (listing) {
+//   return `<li><a href="#">${allListings.rows.sale_item}</a></li>`
+// }
 
-function renderAllListings (allListings) {
-  return '<ul>' + allListings.map(renderListing).join('') + '</ul>'
-}
+// function renderAllListings (allListings) {
+//   return '<ul>' + allListings.map(renderListing).join('') + '</ul>'
+// }
 
 // Database Queries
 
