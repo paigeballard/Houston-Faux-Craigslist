@@ -7,15 +7,18 @@ const createFakeSale = () => ({
     description: faker.lorem.sentences(6),
 });
 
-exports.seed = async function(knex, Promise) {
+exports.seed = function(knex) {
   // Sale Item
-  const fakeSales = [];
-  const desiredFakeSales = 500;
+return knex('sales').del()
+  .then(function () {
+    const fakeSales = [];
+  const desiredFakeSales = 100;
   for (let i = 0; i < desiredFakeSales; i++) {
     fakeSales.push(createFakeSale());
   }
-  await knex("sales")
+  return knex("sales")
     .insert(fakeSales)
+  })
 };
 
 
