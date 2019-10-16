@@ -134,11 +134,7 @@ app.get('/', function (req, res) {
 })
 
 app.get('/login', function (req, res) {
-<<<<<<< HEAD
-=======
-  //res.send("This is the login page template.")
 
->>>>>>> master
   res.send(mustache.render(loginTemplate))
 })
 
