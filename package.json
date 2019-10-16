@@ -11,12 +11,6 @@
   "dependencies": {
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
-<<<<<<< HEAD
-=======
-
-    "faker": "^4.1.0",
-
->>>>>>> c1317de9362b1505e15ad299d666a023e01afc21
     "express-session": "^1.17.0",
     "faker": "^4.1.0",
     "fs": "0.0.1-security",
