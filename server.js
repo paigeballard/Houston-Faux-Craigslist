@@ -6,7 +6,12 @@ const port = 3000;
 const login = require('./login.js')     //for login
 const fs = require('fs')                //for templating
 const mustache = require('mustache')    //for templating
+const bodyParser = require('body-parser')
+const cors = require('cors')
 
+app.use(cors())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.urlencoded())
 // -----------------------------------------------------------------------------
 // OAuthorization
 require('dotenv').config() //to hide keys
@@ -76,14 +81,36 @@ const loginTemplate = fs.readFileSync('./templates/login.mustache', 'utf8')
 //app.use('/auth', login)  // access the auth routes in login.js 
 
 app.get('/', function (req, res) {
-  //res.send("This is the homepage template which will render and list all of the listings from the database.")
-  res.send(mustache.render(homepageTemplate))
+  getAllListings()
+  .then(function(allListings){
+    const listings = []
+    for (var i = 0; i < allListings.rows.length; i++) {
+      let item = allListings.rows[i].sale_item
+      let listItem = `<li><a href="">${item}</a></li>`
+      listings.push(listItem)
+    }
+    let wholeList = `<ul style="list-style: none;">${listings.join('')}</ul>`
+    res.send(mustache.render(homepageTemplate, {listingsHTML: wholeList}))
+})
 })
 
 app.get('/login', function (req, res) {
   //res.send("This is the login page template.")
   res.send(mustache.render(loginTemplate))
+})
 
+app.get('/listings', function (req, res) {
+  getAllListings()
+  .then(function(allListings){
+    const listings = []
+    for (var i = 0; i < allListings.rows.length; i++) {
+      let item = allListings.rows[i].sale_item
+      let listItem = `<li><a href="">${item}</a></li>`
+      listings.push(listItem)
+    }
+    let wholeList = `<ul style="list-style: none;">${listings.join('')}</ul>`
+    res.send(wholeList)
+})
 })
 
 app.get('/listings/:slug', function (req, res) {
@@ -93,3 +120,24 @@ app.get('/listings/:slug', function (req, res) {
 app.listen(port, function () {
   console.log('Listening on port ' + port + ' 👍')
 })
+
+// HTML Rendering
+
+function renderListing (listing) {
+  return `<li><a href="#">${allListings.rows.sale_item}</a></li>`
+}
+
+function renderAllListings (allListings) {
+  return '<ul>' + allListings.map(renderListing).join('') + '</ul>'
+}
+
+// Database Queries
+
+const getAllListingsQuery = `
+  SELECT sale_item 
+  FROM sales
+`
+
+function getAllListings () {
+  return db.raw(getAllListingsQuery)
+}
