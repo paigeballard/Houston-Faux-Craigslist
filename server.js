@@ -129,8 +129,9 @@ app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email']})
 app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' , successRedirect: '/user'}),
 );
 
+const userTemplate = fs.readFileSync('./templates/user.mustache', 'utf8')
 app.get('/user', checkAuthentication, function (req, res){
-      res.send('you are in the user page')
+      res.send(mustache.render(userTemplate))
 })
   
 // -----------------------------------------------------------------------------
@@ -178,6 +179,11 @@ app.get('/listings/:id', function (req, res) {
       res.status(404).send('Listing Does Not Exist :(')
     })
 })
+
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
 
 app.listen(port, function () {
   console.log('Listening on port ' + port + ' 👍')
