@@ -103,7 +103,6 @@ function createUser(profile){
   //return db.raw('INSERT INTO users (\"firstName\", \"lastName\", email) VALUES (?, ?, ?)', [firstName, lastName, email])
 }
 
-
 function findUser(userObj){
   let nameArr = userObj._json.name.split(' ')
   return db.raw('SELECT * FROM users WHERE \"lastName\" = ?', [nameArr[1]])  
