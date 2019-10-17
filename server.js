@@ -6,7 +6,9 @@ const port = 3000;
 const login = require('./login.js')     //for login
 const fs = require('fs')                //for templating
 const mustache = require('mustache')    //for templating
+const bodyParser = require('body-parser')
 
+app.use(bodyParser.urlencoded({ extended: false }))
 
 // -----------------------------------------------------------------------------
 // OAuthorization
@@ -154,7 +156,7 @@ app.get('/', function (req, res) {
     for (var i = 0; i < allListings.rows.length; i++) {
       let item = allListings.rows[i].sale_item
       let listing = allListings.rows[i].id
-      let listItem = `<li style="font-size: 2.5em;"><a href="/listings/${listing}">${item}</a></li>`
+      let listItem = `<li style="font-size: 2.5em;"><a href="/listing/${listing}">${item}</a></li>`
       listings.push(listItem)
     }
     let wholeList = `<ul style="list-style: none;">${listings.join('')}</ul>`
@@ -167,12 +169,12 @@ app.get('/login', function (req, res) {
   res.send(mustache.render(loginTemplate))
 })
 
-app.get('/listings/:id', function (req, res) {
-  console.log(req.params)
+app.get('/listing/:id', function (req, res) {
+  console.log('params', req.params)
   getOneListing(req.params)
     .then(function (listing) {
-      res.send(mustache.render(listingTemplate, {
-        listingHTML: singleListing(listing)
+      console.log('listing', listing)
+      res.send(mustache.render(listingTemplate, { listingHTML: singleListing(listing)
       }))
     })
     .catch(function (err) {
@@ -192,9 +194,9 @@ app.listen(port, function () {
 // HTML Rendering
 
 function singleListing (listing) {
-  return `<li><a href="#">${listing.rows.sale_item}</a></li>
-  <li><a href="#">${listings.rows.description}</a></li>
-  <li><a href="#">${listings.rows.price}</a></li>`
+  return `<h2>${listing.sale_item}</h2>
+          <h2>${listing.price}</h2>
+          <p>${listing.description}</p>`
 }
 
 
@@ -206,13 +208,14 @@ const getAllListingsQuery = `
 `
 
 function getOneListing (listing) {
-  return db.raw('SELECT * FROM sales WHERE id = ?', [listing])
+  const listingId = parseInt(listing.id)
+  return db.raw('SELECT * FROM sales WHERE id = ?', [listingId])
   .then(function (results) {
-    if (results.length !==1) {
-      throw null
-    } else {
-      return results[0]
-    }
+    // if (results.length !==1) {
+    //   throw null
+    // } else {
+      console.log("results.rows", results.rows[0])
+      return results.rows[0]
   })
 }
 
