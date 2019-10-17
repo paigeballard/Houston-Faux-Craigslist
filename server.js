@@ -116,6 +116,7 @@ app.get('/user', checkAuthentication, function (req, res){
 //templates
 const homepageTemplate = fs.readFileSync('./templates/homepage.mustache', 'utf8')
 const loginTemplate = fs.readFileSync('./templates/login.mustache', 'utf8')
+const listingTemplate = fs.readFileSync('./templates/listing.mustache', 'utf8')
 
 //app.use('/auth', login)  // access the auth routes in login.js 
 
@@ -125,7 +126,8 @@ app.get('/', function (req, res) {
     const listings = []
     for (var i = 0; i < allListings.rows.length; i++) {
       let item = allListings.rows[i].sale_item
-      let listItem = `<li><a href="">${item}</a></li>`
+      let listing = allListings.rows[i].id
+      let listItem = `<li style="font-size: 2.5em;"><a href="/listings/${listing}">${item}</a></li>`
       listings.push(listItem)
     }
     let wholeList = `<ul style="list-style: none;">${listings.join('')}</ul>`
@@ -138,22 +140,17 @@ app.get('/login', function (req, res) {
   res.send(mustache.render(loginTemplate))
 })
 
-app.get('/listings', function (req, res) {
-  getAllListings()
-  .then(function(allListings){
-    const listings = []
-    for (var i = 0; i < allListings.rows.length; i++) {
-      let item = allListings.rows[i].sale_item
-      let listItem = `<li><a href="">${item}</a></li>`
-      listings.push(listItem)
-    }
-    let wholeList = `<ul style="list-style: none;">${listings.join('')}</ul>`
-    res.send(wholeList)
-})
-})
-
-app.get('/listings/:slug', function (req, res) {
-  res.send("This is each listing displayed individually.")
+app.get('/listings/:id', function (req, res) {
+  console.log(req.params)
+  getOneListing(req.params)
+    .then(function (listing) {
+      res.send(mustache.render(listingTemplate, {
+        listingHTML: singleListing(listing)
+      }))
+    })
+    .catch(function (err) {
+      res.status(404).send('Listing Does Not Exist :(')
+    })
 })
 
 app.listen(port, function () {
@@ -162,20 +159,30 @@ app.listen(port, function () {
 
 // HTML Rendering
 
-function renderListing (listing) {
-  return `<li><a href="#">${allListings.rows.sale_item}</a></li>`
+function singleListing (listing) {
+  return `<li><a href="#">${listing.rows.sale_item}</a></li>
+  <li><a href="#">${listings.rows.description}</a></li>
+  <li><a href="#">${listings.rows.price}</a></li>`
 }
 
-function renderAllListings (allListings) {
-  return '<ul>' + allListings.map(renderListing).join('') + '</ul>'
-}
 
 // Database Queries
 
 const getAllListingsQuery = `
-  SELECT sale_item 
+  SELECT * 
   FROM sales
 `
+
+function getOneListing (listing) {
+  return db.raw('SELECT * FROM sales WHERE id = ?', [listing])
+  .then(function (results) {
+    if (results.length !==1) {
+      throw null
+    } else {
+      return results[0]
+    }
+  })
+}
 
 function getAllListings () {
   return db.raw(getAllListingsQuery)
