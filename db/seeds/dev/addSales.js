@@ -5,6 +5,7 @@ const createFakeSale = () => ({
     sale_item: faker.commerce.productName(),
     price: parseInt( faker.commerce.price() ) * 100,
     description: faker.lorem.sentences(6),
+    img: faker.image.imageUrl()
 });
 
 exports.seed = function(knex) {
