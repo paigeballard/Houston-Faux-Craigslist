@@ -3,7 +3,7 @@ const faker = require("faker");
 
 const createFakeSale = () => ({
     sale_item: faker.commerce.productName(),
-    price: parseInt( faker.commerce.price() ) * 100,
+    price: parseInt( faker.commerce.price() ),
     description: faker.lorem.sentences(6),
     img: faker.image.imageUrl()
 });
