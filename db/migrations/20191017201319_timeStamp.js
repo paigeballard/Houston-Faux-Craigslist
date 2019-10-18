@@ -1,9 +1,9 @@
 
 exports.up = function (knex) {
     return knex.schema.table('sales', (table) => {
-        table.specificType('img', 'bytea')
+        table.timestamps(true);
     })
   };   
   exports.down = function (knex) {
-    return knex.schema.raw('DROP COLUMN specificTypes')
+    return knex.schema.raw('DROP COLUMN timestamps')
   };
