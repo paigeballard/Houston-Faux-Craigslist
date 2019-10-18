@@ -5,5 +5,5 @@ exports.up = function (knex) {
     })
   };   
   exports.down = function (knex) {
-    return knex.schema.raw('DROP TABLE sales')
+    return knex.schema.raw('DROP COLUMN timestamps')
   };
