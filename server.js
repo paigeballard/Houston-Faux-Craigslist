@@ -155,8 +155,10 @@ app.get('/', function (req, res) {
     const listings = []
     for (var i = 0; i < allListings.rows.length; i++) {
       let item = allListings.rows[i].sale_item
+      let price = allListings.rows[i].price
       let listing = allListings.rows[i].id
-      let listItem = `<li style="font-size: 2.5em;"><a href="/listing/${listing}">${item}</a></li>`
+      let thumbnail = allListings.rows[i].img
+      let listItem = `<li style="font-size: 1em;"><a href="/listing/${listing}"><img src="${thumbnail}"/>${item} - $ ${price}</a></li>`
       listings.push(listItem)
     }
     let wholeList = `<ul style="list-style: none;">${listings.join('')}</ul>`
@@ -194,9 +196,12 @@ app.listen(port, function () {
 // HTML Rendering
 
 function singleListing (listing) {
-  return `<h2>${listing.sale_item}</h2>
-          <h2>${listing.price}</h2>
-          <p>${listing.description}</p>`
+  return `<h2>${listing.sale_item} - $ ${listing.price}</h2>
+          <img src="${listing.img}"/>
+          <p>${listing.description}</p>
+          <br>
+          <br>
+          <p>Posted by: ${listing.id} user`
 }
 
 
@@ -214,7 +219,7 @@ function getOneListing (listing) {
     // if (results.length !==1) {
     //   throw null
     // } else {
-      console.log("results.rows", results.rows[0])
+      console.log(results.rows[0])
       return results.rows[0]
   })
 }
