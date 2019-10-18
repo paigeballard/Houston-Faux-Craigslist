@@ -11,7 +11,18 @@
   </head>
   <body>
 
-    <div>{{{listingHTML}}}</div>
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a href="/" class="navbar-brand">Craigslist</a>
+
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ml-auto">
+                <span class="nav-item nav-link"></span>
+                <a href="/newlisting" class="nav-item nav-link">Create New Listing</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">{{{listingHTML}}}</div>
   
   </body>
 </html>
