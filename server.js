@@ -6,7 +6,9 @@ const port = 3000;
 const login = require('./login.js')     //for login
 const fs = require('fs')                //for templating
 const mustache = require('mustache')    //for templating
+const bodyParser = require('body-parser')
 
+app.use(bodyParser.urlencoded({ extended: false }))
 
 // -----------------------------------------------------------------------------
 // OAuthorization
@@ -60,28 +62,54 @@ passport.use(new GitHubStrategy({
                 console.log('new user created')
               })
           } else {
-            console.log('user already exists in DB')
+            console.log('user already exists in DB', results)
           }
         })      
       return cb(null, profile);
   }
 ));
 
+//FACEBOOK Strategy  
+const FacebookStrategy = require('passport-facebook').Strategy;
 
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: "/auth/facebook/callback",
+    profileFields: ['id', 'emails', 'name'] 
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    console.log('facebook profile: ', profile)
+      return cb(null, profile);
+  }
+));
 
 
 //Database Queries
 function createUser(profile){
-  let nameArr = profile.displayName.split(' ')
-  return db.raw('INSERT INTO users (\"firstName\", \"lastName\") VALUES (?, ?)', [nameArr[0], nameArr[1]])
-  //return db.raw('INSERT INTO users (\"firstName\", \"lastName\", \"email\") VALUES (?, ?, ?)', [nameArr[0], nameArr[1]], profile.emails[0].value)
+  let email = profile._json.email
+  let firstName;
+  let lastName;
+
+  if (profile._json.name){  //object structure for Github Strategy
+    let fullName = profile._json.name.split(' ')
+    firstName = nameArr[0]
+    if (fullName.length > 2){lastName = nameArr[1] + '' +  nameArr[2]}
+    else {lastName = nameArr[1]}
+  } 
+  else if (profile._json.first_name){
+    firstName = profile._json.first_name
+    lastName = profile._json.last_name
+  }
+  return db.raw('INSERT INTO users (\"firstName\", \"lastName\") VALUES (?, ?)', [firstName, lastName])
+  //return db.raw('INSERT INTO users (\"firstName\", \"lastName\", email) VALUES (?, ?, ?)', [firstName, lastName, email])
 }
+
 function findUser(userObj){
-  let nameArr = userObj.displayName.split(' ')
-  return db.raw('SELECT * FROM users WHERE \"lastName\" = ?', [nameArr[1]])  //use email instead of last name
-  .then(function(results) {
-    return results
-  })
+  let nameArr = userObj._json.name.split(' ')
+  return db.raw('SELECT * FROM users WHERE \"lastName\" = ?', [nameArr[1]])  
+  // let email = obj._json.email
+  // return db.raw('SELECT * FROM users WHERE email = ?', [email])  
 }
 
 
@@ -94,17 +122,18 @@ function checkAuthentication(req,res,next){
 }
 
 //AUTH ROUTES
-app.get('/auth/github',
-  passport.authenticate('github')
-  );  //redirects to github.com
+app.get('/auth/github', passport.authenticate('github'));  //redirects to github.com
 
-app.get('/auth/github/callback',  //if successful, goes to cb url
-  passport.authenticate('github', { failureRedirect: '/login' , successRedirect: '/user'}),
- 
+app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' , successRedirect: '/user'}),);
+
+app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email']}));
+
+app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' , successRedirect: '/user'}),
 );
 
+const userTemplate = fs.readFileSync('./templates/user.mustache', 'utf8')
 app.get('/user', checkAuthentication, function (req, res){
-      res.send('you are in the user page')
+      res.send(mustache.render(userTemplate))
 })
   
 // -----------------------------------------------------------------------------
@@ -127,7 +156,7 @@ app.get('/', function (req, res) {
     for (var i = 0; i < allListings.rows.length; i++) {
       let item = allListings.rows[i].sale_item
       let listing = allListings.rows[i].id
-      let listItem = `<li style="font-size: 2.5em;"><a href="/listings/${listing}">${item}</a></li>`
+      let listItem = `<li style="font-size: 2.5em;"><a href="/listing/${listing}">${item}</a></li>`
       listings.push(listItem)
     }
     let wholeList = `<ul style="list-style: none;">${listings.join('')}</ul>`
@@ -140,18 +169,23 @@ app.get('/login', function (req, res) {
   res.send(mustache.render(loginTemplate))
 })
 
-app.get('/listings/:id', function (req, res) {
-  console.log(req.params)
+app.get('/listing/:id', function (req, res) {
+  console.log('params', req.params)
   getOneListing(req.params)
     .then(function (listing) {
-      res.send(mustache.render(listingTemplate, {
-        listingHTML: singleListing(listing)
+      console.log('listing', listing)
+      res.send(mustache.render(listingTemplate, { listingHTML: singleListing(listing)
       }))
     })
     .catch(function (err) {
       res.status(404).send('Listing Does Not Exist :(')
     })
 })
+
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
 
 app.listen(port, function () {
   console.log('Listening on port ' + port + ' 👍')
@@ -160,9 +194,9 @@ app.listen(port, function () {
 // HTML Rendering
 
 function singleListing (listing) {
-  return `<li><a href="#">${listing.rows.sale_item}</a></li>
-  <li><a href="#">${listings.rows.description}</a></li>
-  <li><a href="#">${listings.rows.price}</a></li>`
+  return `<h2>${listing.sale_item}</h2>
+          <h2>${listing.price}</h2>
+          <p>${listing.description}</p>`
 }
 
 
@@ -174,13 +208,14 @@ const getAllListingsQuery = `
 `
 
 function getOneListing (listing) {
-  return db.raw('SELECT * FROM sales WHERE id = ?', [listing])
+  const listingId = parseInt(listing.id)
+  return db.raw('SELECT * FROM sales WHERE id = ?', [listingId])
   .then(function (results) {
-    if (results.length !==1) {
-      throw null
-    } else {
-      return results[0]
-    }
+    // if (results.length !==1) {
+    //   throw null
+    // } else {
+      console.log("results.rows", results.rows[0])
+      return results.rows[0]
   })
 }
 
