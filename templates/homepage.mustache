@@ -8,6 +8,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">   
+    <style>
+        img {
+            border: 1px solid #ddd; /* Gray border */
+            border-radius: 4px;  /* Rounded border */
+            padding: 5px; /* Some padding */
+            width: 60px; /* Set a small width */
+            height: 60px;
+            }
+
+            /* Add a hover effect (blue shadow) */
+        img:hover {
+            box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+            }
+
+        .date {
+            color: gray;
+            font-size: 11px;
+        }
+
+        .price {
+            padding-left: 60px;
+            margin-top: -20px;
+            /*border-radius: .25em;
+            border: 1px solid #ccc;*/
+            font-size: 12px;
+            font-family: "Arial",sans-serif;
+        }
+    </style>
+
   </head>
 
   <body>
@@ -91,7 +120,7 @@
             <div class="col">
                 <h2 class="text-center bg-light border-top border-bottom border-secondary">houston, TX</h2>
                 <h4 class="text-center bg-light border-top border-bottom border-secondary">for sale</h4>
-                <div>{{{listingsHTML}}}</div>
+                <div class="text-left">{{{listingsHTML}}}</div>
             </div>
 
 

@@ -115,18 +115,35 @@ const listingFormTemplate = fs.readFileSync('./templates/listing-form.mustache',
 
 //ROUTES ----------------------------------------------------------------------- //
 
-app.get('/', function (req, res) {
-  //res.send(mustache.render(homepageTemplate))
+
+app.get('/:page?', function (req, res) {
+  var page = req.params.page;
+  if (!page) {
+    page = 0
+  }
   getAllListings()
   .then(function(allListings){
+    console.log('page number', page)
+    // first page needs to be converted to a number
+    // then use page in the for loop to get the targeted 25 listings
+
+    // finally, previous and next links need to be added to the html.  how to use page number to make those.
     const listings = []
     for (var i = 0; i < allListings.rows.length; i++) {
+      console.log('thumbnail test', allListings.rows[i].img.toString('utf8'))
       let item = allListings.rows[i].sale_item
+      let price = allListings.rows[i].price
       let listing = allListings.rows[i].id
-      let listItem = `<li style="font-size: 2.5em;"><a href="/listing/${listing}">${item}</a></li>`
+      let createdDate = allListings.rows[i].created_at
+      let thumbnail = allListings.rows[i].img.toString('utf8')
+      let listItem = `<li class="price">$${price}</li>
+                      <li style="font-size: 1em;"><a href="/listing/${listing}">
+                      <img src="${thumbnail}"/><span class="date">${createdDate}</span> ${item}</a></li>
+                      
+      `
       listings.push(listItem)
     }
-    let wholeList = `<ul style="list-style: none;">${listings.join('')}</ul>`
+    let wholeList = `<ul class="d-flex flex-column-reverse" style="list-style: none;">${listings.join('')}</ul>`
     res.send(mustache.render(homepageTemplate, {listingsHTML: wholeList}))
   })
 })
@@ -191,9 +208,13 @@ app.listen(port, function () {
 // HTML Rendering ----------------------------------------------------------------------- //
 
 function singleListing (listing) {
-  return `<h2>${listing.sale_item}</h2>
-          <h2>${listing.price}</h2>
-          <p>${listing.description}</p>`
+  console.log('this is the', listing)
+  return `<h2>${listing.sale_item} - $ ${listing.price}</h2>
+          <img src="${listing.img}"/>
+          <p>${listing.description}</p>
+          <br>
+          <br>
+          <p>Posted by: ${listing.id} user`
 }
 
 
@@ -211,7 +232,8 @@ function getOneListing (listing) {
     // if (results.length !==1) {
     //   throw null
     // } else {
-     // console.log("results.rows", results.rows[0])
+
+      console.log(results.rows[0])
       return results.rows[0]
   })
 }

@@ -9,10 +9,10 @@ const createFakeUser = () => ({
 
 exports.seed = function(knex) {
   // users
-  return knex('users').del() 
+  return knex('users')
   .then(function () {
     const fakeUsers = [];
-    const desiredFakeUsers = 100;
+    const desiredFakeUsers = 20;
     for (let i = 0; i < desiredFakeUsers; i++) {
       fakeUsers.push(createFakeUser());
     }
