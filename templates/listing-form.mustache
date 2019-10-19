@@ -1,0 +1,49 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <title>Houston Faux Craigslist</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">   
+  </head>
+
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a href="/" class="navbar-brand">Craigslist</a>
+
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ml-auto">
+                <span class="nav-item nav-link">userName</span>
+                <a href="/logout" class="nav-item nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="row">
+        <div class="col-8 mx-auto">
+            <form method="POST" action="/newlisting">
+                <div class="form-row">
+                    <div class="form-group col-8">
+                        <label for="title">posting title</label>
+                        <input type="text" class="form-control" id="listing-title" name="listingTitle">
+                    </div>
+                    <div class="form-group col-4">
+                        <label for="price">price</label>
+                            <input type="number" class="form-control" min="0.00" max="10000.00" step="1" value="$" name="listingPrice"/>
+                            <!-- <input type="text" class="form-control" id="listing-price">                     -->
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label for="description">description</label>
+                        <textarea rows="10" type="text" class="form-control" id="listing-description" name="listingDescription"></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="btn btn btn-primary">Submit</button>
+                </div>    
+               
+        </div>
+    </div>
