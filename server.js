@@ -116,7 +116,7 @@ const listingFormTemplate = fs.readFileSync('./templates/listing-form.mustache',
 //ROUTES ----------------------------------------------------------------------- //
 
 
-app.get('/:page?', function (req, res) {
+app.get('/', function (req, res) {
   var page = req.params.page;
   if (!page) {
     page = 0
@@ -130,12 +130,12 @@ app.get('/:page?', function (req, res) {
     // finally, previous and next links need to be added to the html.  how to use page number to make those.
     const listings = []
     for (var i = 0; i < allListings.rows.length; i++) {
-      console.log('thumbnail test', allListings.rows[i].img.toString('utf8'))
+      
       let item = allListings.rows[i].sale_item
       let price = allListings.rows[i].price
       let listing = allListings.rows[i].id
       let createdDate = allListings.rows[i].created_at
-      let thumbnail = allListings.rows[i].img.toString('utf8')
+      let thumbnail = allListings.rows[i].img
       let listItem = `<li class="price">$${price}</li>
                       <li style="font-size: 1em;"><a href="/listing/${listing}">
                       <img src="${thumbnail}"/><span class="date">${createdDate}</span> ${item}</a></li>
