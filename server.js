@@ -36,7 +36,6 @@ passport.serializeUser(function(user, cb) { //first time login succesfuly, user 
 });
 
 passport.deserializeUser(function(obj, cb) { //runs every time you go to new page during session
-  console.log('object inside deserialization:', obj) 
   findUser(obj)
     .then(function(results, err){  //findUser returns an object {id:'id', firstName: 'first name',  lastName: 'last ',  email: 'email' }
       cb(null, results)      
@@ -55,20 +54,14 @@ passport.use(new GitHubStrategy({
     scope: [ 'user:email' ]
   },
   function(accessToken, refreshToken, profile, cb) {
-    console.log('profile', profile)
-    findUser(profile)  //findUser returns an object {id:'id', firstName: 'first name',  lastName: 'last ',  email: 'email' }
-      .then(function(results){
-        if(!results){
-          createUser(profile)
-            .then(function (results) {
-              console.log('new user created')
-            })
-        } else {
-          console.log('user already exists in DB')
-        }
-      })      
+      createUser(profile)
+        .then(function(value){
+          if (value.name === 'error'){console.log('user already exists in database, no need to add')}
+          else{console.log('new user created in database')}
+        })       
     return cb(null, profile);
   }
+
 ));
 
 //FACEBOOK Strategy  
@@ -81,19 +74,15 @@ passport.use(new FacebookStrategy({
     profileFields: ['id', 'emails', 'name'] 
   },
   function(accessToken, refreshToken, profile, cb) {
-    findUser(profile)  //findUser returns an object {id:'id', firstName: 'first name',  lastName: 'last ',  email: 'email' }
-      .then(function(results){
-        if(!results){
-          createUser(profile)
-            .then(function (results) {
-              console.log('new user created')
-            })
-        } else {
-          console.log('user already exists in DB')
-        }
-      })      
-    return cb(null, profile);
+    createUser(profile)
+      .then(function(value){
+        console.log('fb strategy:', value)
+        if (value.name === 'error'){console.log('user already exists in database, no need to add')}
+        else{console.log('new user created in database')}
+      })       
+  return cb(null, profile);
   }
+
 ));
 
 
@@ -244,10 +233,10 @@ function getAllListings () {
 
 function findUser(userObj){
   let email = userObj._json.email
-  console.log('email:', email)
+  //console.log('email:', email)
   return db.raw('SELECT * FROM users WHERE email = ?', [email])  
   .then(function(results){
-    if (results.rows.length === 0){ throw 'error: user not found'}
+    if (results.rows.length === 0){ throw 'error: user not in database'}
     else {return results.rows[0]}
   })
    
@@ -268,8 +257,15 @@ function createUser(profile){
     firstName = profile._json.first_name
     lastName = profile._json.last_name
   }
-  return db.raw('INSERT INTO users (\"firstName\", \"lastName\", email) VALUES (?, ?, ?)', [firstName, lastName, email])
+ return db.raw('INSERT INTO users (\"firstName\", \"lastName\", email) VALUES (?, ?, ?)', [firstName, lastName, email], 'ON CONFLICT (email) DO NOTHING')
+    .then(function(results){
+      return results
+    })
+    .catch(function(error){
+      return error
+    })
 }
+
 
 
 function addListing(formData, id) {
