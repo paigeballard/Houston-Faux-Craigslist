@@ -277,6 +277,6 @@ function addListing(formData, id) {
   let price = formData.listingPrice
   let description = formData.listingDescription
   let userid = id
-  return db.raw('INSERT INTO sales (sale_item, price, description) VALUES (?, ?, ?)', [title, price, description])
+  return db.raw('INSERT INTO sales (sale_item, price, description, user_id) VALUES (?, ?, ?, ?)', [title, price, description, userid])
     
 }
