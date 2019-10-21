@@ -106,34 +106,9 @@ const listingFormTemplate = fs.readFileSync('./templates/listing-form.mustache',
 
 
 app.get('/', function (req, res) {
-  var page = req.params.page;
-  if (!page) {
-    page = 0
-  }
   getAllListings()
   .then(function(allListings){
-    console.log('page number', page)
-    // first page needs to be converted to a number
-    // then use page in the for loop to get the targeted 25 listings
-
-    // finally, previous and next links need to be added to the html.  how to use page number to make those.
-    const listings = []
-    for (var i = 0; i < allListings.rows.length; i++) {
-      
-      let item = allListings.rows[i].sale_item
-      let price = allListings.rows[i].price
-      let listing = allListings.rows[i].id
-      let createdDate = allListings.rows[i].created_at
-      let thumbnail = allListings.rows[i].img
-      let listItem = `<li class="price">$${price}</li>
-                      <li style="font-size: 1em;"><a href="/listing/${listing}">
-                      <img class="border rounded"src="${thumbnail}"/><span class="text-secondary d-inline-block text-truncate" style="font-size:11px; max-width:102px;">${createdDate}</span> ${item}</a></li>
-                      
-      `
-      listings.push(listItem)
-    }
-    let wholeList = `<ul class="d-flex flex-column-reverse list-unstyled" >${listings.join('')}</ul>`
-    res.send(mustache.render(homepageTemplate, {listingsHTML: wholeList}))
+    completeRenderHomepage(allListings, res);
   })
 })
 
@@ -160,10 +135,8 @@ app.get('/user', checkAuthentication, function (req, res){
 })
 
 app.get('/listing/:id', function (req, res) {
-  //console.log('params', req.params)
   getOneListing(req.params)
     .then(function (listing) {
-      //console.log('listing', listing)
       res.send(mustache.render(listingTemplate, { listingHTML: singleListing(listing)
       }))
     })
@@ -193,6 +166,32 @@ app.post('/newlisting', function (req, res){
 app.listen(port, function () {
   console.log('Listening on port ' + port + ' 👍')
 })
+
+function completeRenderHomepage(allListings, res) {
+  const listings = renderAllListings(allListings);
+  let wholeList = `<ul class="d-flex flex-column-reverse list-unstyled" >${listings.join('')}</ul>`;
+  res.send(mustache.render(homepageTemplate, { listingsHTML: wholeList }));
+}
+
+function renderAllListings(allListings) {
+        // first page needs to be converted to a number
+    // then use page in the for loop to get the targeted 25 listings
+    // finally, previous and next links need to be added to the html.  how to use page number to make those.
+  const listings = [];
+  for (var i = 0; i < allListings.rows.length; i++) {
+    let item = allListings.rows[i].sale_item;
+    let price = allListings.rows[i].price;
+    let listing = allListings.rows[i].id;
+    let createdDate = allListings.rows[i].created_at;
+    let thumbnail = allListings.rows[i].img;
+    let listItem = `<li class="price">$${price}</li>
+                      <li style="font-size: 1em;"><a href="/listing/${listing}">
+                      <img class="border rounded"src="${thumbnail}"/><span class="text-secondary d-inline-block text-truncate" style="font-size:11px; max-width:102px;">${createdDate}</span> ${item}</a></li>
+      `;
+    listings.push(listItem);
+  }
+  return listings;
+}
 
 // HTML Rendering ----------------------------------------------------------------------- //
 
