@@ -127,12 +127,12 @@ app.get('/', function (req, res) {
       let thumbnail = allListings.rows[i].img
       let listItem = `<li class="price">$${price}</li>
                       <li style="font-size: 1em;"><a href="/listing/${listing}">
-                      <img src="${thumbnail}"/><span class="date">${createdDate}</span> ${item}</a></li>
+                      <img class="border rounded"src="${thumbnail}"/><span class="text-secondary d-inline-block text-truncate" style="font-size:11px; max-width:102px;">${createdDate}</span> ${item}</a></li>
                       
       `
       listings.push(listItem)
     }
-    let wholeList = `<ul class="d-flex flex-column-reverse" style="list-style: none;">${listings.join('')}</ul>`
+    let wholeList = `<ul class="d-flex flex-column-reverse list-unstyled" >${listings.join('')}</ul>`
     res.send(mustache.render(homepageTemplate, {listingsHTML: wholeList}))
   })
 })
