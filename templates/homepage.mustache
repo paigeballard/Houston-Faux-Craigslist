@@ -30,75 +30,37 @@
             <div class="col-3 bg-light border-right border-left border-secondary">
                 <h1 class="text-center">craigslist</h1>
                 <ul class="list-unstyled">   
-                    <li class="text-center"><a href="/newlisting">create a posting</a></li>       
+                    <!-- <li class="text-center"><a href="/newlisting">create a posting</a></li>        -->
                     <li class="text-center"><a href="/user">my account</a></li>  
                 </ul>
                 <p class="text-center"><a href="#">event calendar</a></p>
                 <table class="table-bordered mx-auto">
                     <tr class="days">
-                        <th>M</th>
-                        <th>T</th>
-                        <th>W</th>
-                        <th>T</th>
-                        <th>F</th>
-                        <th>S</th>
-                        <th>S</th>
+                        {{#days}}<td class="text-center">{{.}}</td>{{/days}}                      
                     </tr>
                     <tr>
-                        <td class="">7</td>
-                        <td class="">8</td>
-                        <td class="">9</td>
-                        <td class="">10</td>
-                        <td class="">11</td>
-                        <td class="">12</td>
-                        <td class="">13</td>
+                        {{#week1}}<td class="text-center">{{.}}</td>{{/week1}}    
                     </tr>
                     <tr>
-                        <td class="">14</td>
-                        <td class="">15</td>
-                        <td class="">16</td>
-                        <td class="">17</td>
-                        <td class="">18</td>
-                        <td class="">19</td>
-                        <td class="">20</td>
+                        {{#week2}}<td class="text-center">{{.}}</td>{{/week2}}      
                     </tr>
                     <tr>
-                        <td class="">21</td>
-                        <td class="">22</td>
-                        <td class="">23</td>
-                        <td class="">24</td>
-                        <td class="">25</td>
-                        <td class="">26</td>
-                        <td class="">27</td>
+                        {{#week3}}<td class="text-center">{{.}}</td>{{/week3}}       
                     </tr>
                     <tr>
-                        <td class="">28</td>
-                        <td class="">29</td>
-                        <td class="">30</td>
-                        <td class="">31</td>
-                        <td class="">1</td>
-                        <td class="">2</td>
-                        <td class="">3</td>
+                        {{#week4}}<td class="text-center">{{.}}</td>{{/week4}}       
                     </tr>
                 </table>
-                <ul class="list-unstyled">      
-                    <li class="text-center"><a href="#">cl mobile app <sup>beta</sup></a></li>
-                    <li class="text-center"><a href="#">help, faq, abuse, legal</a></li>
-                    <li class="text-center"><a href="#">avoid scams &amp; fraud</a></li>
-                    <li class="text-center"><a href="#">personal safety tips</a></li>
-                    <li class="text-center"><a href="#">terms of use<sup class="neu">new</sup></a></li>
-                    <li class="text-center"><a href="#">privacy policy</a></li>
-                    <li class="text-center"><a href="#">system status</a></li>
+                <ul class="list-unstyled">
+                    {{#resources}}
+                        <li class="text-center"><a href="#">{{{.}}}</li>
+                    {{/resources}}           
+                  
                 </ul>               
-                <ul class="list-unstyled">        
-                    <li class="text-center"><a href="#">about craigslist</a></li>
-                    <li class="text-center"><a href="#">craigslist is hiring in sf</a></li>
-                    <li class="text-center"><a href="#">craigslist open source</a></li>
-                    <li class="text-center"><a href="#">craigslist blog</a></li>
-                    <li class="text-center"><a href="#">best-of-craigslist</a></li>
-                    <li class="text-center"><a href="#">craigslist TV</a></li>
-                    <li class="text-center"><a href="#">"craigslist joe"</a></li>
-                    <li class="text-center"><a href="#">craig connects</a></li>
+                <ul class="list-unstyled"> 
+                    {{#about}}
+                        <li class="text-center"><a href="#">{{.}}</li>
+                    {{/about}}          
                 </ul>
             </div>
 
@@ -112,36 +74,9 @@
             <div class="col-2 bg-light border-right border-left border-secondary"> 
                 <p class="text-center"><a href="">nearby cl</a></p>  
                 <ul class="list-unstyled">
-                    <li class="text-center"><a href="//abilene.craigslist.org/">abilene</a>
-                    <li class="text-center"><a href="//austin.craigslist.org/">austin</a>
-                    <li class="text-center"><a href="//batonrouge.craigslist.org/">baton rouge</a>
-                    <li class="text-center"><a href="//beaumont.craigslist.org/">beaumont</a>
-                    <li class="text-center"><a href="//brownsville.craigslist.org/">brownsville</a>
-                    <li class="text-center"><a href="//cenla.craigslist.org/">central la</a>
-                    <li class="text-center"><a href="//collegestation.craigslist.org/">college station</a>
-                    <li class="text-center"><a href="//corpuschristi.craigslist.org/">corpus christi</a>
-                    <li class="text-center"><a href="//dallas.craigslist.org/">dallas</a>
-                    <li class="text-center"><a href="//nacogdoches.craigslist.org/">deep east tx</a>
-                    <li class="text-center"><a href="//delrio.craigslist.org/">del rio</a>
-                    <li class="text-center"><a href="//easttexas.craigslist.org/">east tx</a>
-                    <li class="text-center"><a href="//galveston.craigslist.org/">galveston</a>
-                    <li class="text-center"><a href="//houma.craigslist.org/">houma</a>
-                    <li class="text-center"><a href="//killeen.craigslist.org/">killeen-temple</a>
-                    <li class="text-center"><a href="//lafayette.craigslist.org/">lafayette</a>
-                    <li class="text-center"><a href="//lakecharles.craigslist.org/">lake charles</a>
-                    <li class="text-center"><a href="//laredo.craigslist.org/">laredo</a>
-                    <li class="text-center"><a href="//mcallen.craigslist.org/">mcallen</a>
-                    <li class="text-center"><a href="//monroe.craigslist.org/">monroe</a>
-                    <li class="text-center"><a href="//neworleans.craigslist.org/">new orleans</a>
-                    <li class="text-center"><a href="//sanangelo.craigslist.org/">san angelo</a>
-                    <li class="text-center"><a href="//sanantonio.craigslist.org/">san antonio</a>
-                    <li class="text-center"><a href="//sanmarcos.craigslist.org/">san marcos</a>
-                    <li class="text-center"><a href="//shreveport.craigslist.org/">shreveport</a>
-                    <li class="text-center"><a href="//natchez.craigslist.org/">southwest ms</a>
-                    <li class="text-center"><a href="//texarkana.craigslist.org/">texarkana</a>
-                    <li class="text-center"><a href="//texoma.craigslist.org/">texoma</a>
-                    <li class="text-center"><a href="//victoriatx.craigslist.org/">victoria</a>
-                    <li class="text-center"><a href="//waco.craigslist.org/">waco</a>
+                    {{#cities}}
+                        <li class="text-center"><a href="#">{{.}}</li>
+                    {{/cities}} 
                 </ul>        
             </div>
         </div>

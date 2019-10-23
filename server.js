@@ -100,6 +100,7 @@ const loginTemplate = fs.readFileSync('./templates/login.mustache', 'utf8')
 const listingTemplate = fs.readFileSync('./templates/listing.mustache', 'utf8')
 const userTemplate = fs.readFileSync('./templates/user.mustache', 'utf8')
 const listingFormTemplate = fs.readFileSync('./templates/listing-form.mustache', 'utf8')
+const CG = require('./craigslistData.js') 
 
 
 //ROUTES ----------------------------------------------------------------------- //
@@ -131,7 +132,8 @@ app.get('/logout', function(req, res){
 });
 
 app.get('/user', checkAuthentication, function (req, res){
-  res.send(mustache.render(userTemplate))
+  let user = `${req.user.firstName} ${req.user.lastName}`
+  res.send(mustache.render(userTemplate, {userName: user}))
 })
 
 app.get('/listing/:id', function (req, res) {
@@ -146,7 +148,8 @@ app.get('/listing/:id', function (req, res) {
 })
 
 app.get('/newlisting', checkAuthentication, function (req, res){
-  res.send(mustache.render(listingFormTemplate))
+  let user = `${req.user.firstName} ${req.user.lastName}`
+  res.send(mustache.render(listingFormTemplate, {userName: user}))
 })
 
 app.post('/newlisting', function (req, res){
@@ -170,7 +173,7 @@ app.listen(port, function () {
 function completeRenderHomepage(allListings, res) {
   const listings = renderAllListings(allListings);
   let wholeList = `<ul class="d-flex flex-column-reverse list-unstyled" >${listings.join('')}</ul>`;
-  res.send(mustache.render(homepageTemplate, { listingsHTML: wholeList }));
+  res.send(mustache.render(homepageTemplate, { listingsHTML: wholeList, days: CG.calendar.days, resources: CG.userResources, about: CG.aboutCraigslist, cities: CG.cities, week1: CG.calendar.weeks.w1, week2: CG.calendar.weeks.w2, week3: CG.calendar.weeks.w3, week4: CG.calendar.weeks.w4}));
 }
 
 function renderAllListings(allListings) {
