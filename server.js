@@ -9,6 +9,7 @@ const bodyParser = require('body-parser')
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.urlencoded())
+app.use(express.static(__dirname + '/public'))
 
 // OAuthorization ----------------------------------------------------------------------- //
 require('dotenv').config() //to hide keys
@@ -131,16 +132,40 @@ app.get('/logout', function(req, res){
   res.redirect('/');
 });
 
-app.get('/user', checkAuthentication, function (req, res){
+
+app.get('/user', checkAuthentication, function (req, res) {
   let user = `${req.user.firstName} ${req.user.lastName}`
+      // res.send(mustache.render(userTemplate))
+      // console.log(listingById)
+      console.log(req.user)
+      let user = req.user.id
+      getUserListings(user)
+      .then(function (results) {
+        console.log('results', results)
+      })
   res.send(mustache.render(userTemplate, {userName: user}))
-})
+    })
+  function getUserListings(id) {
+    return db.raw('SELECT * FROM sales WHERE user_id = ?', [id])
+  }
+
+
+
+// app.get('/user/:id', function (req, res) {
+//   getOneListing(req.params)
+//     .then(function (listing) {
+//       res.send(mustache.render(userTemplate, { listingHTML: listingById(listing)
+//       }))
+//       console.log('sooooooooo, we are getting the listing ')
+//     })
+// })
+
 
 app.get('/listing/:id', function (req, res) {
   getOneListing(req.params)
     .then(function (listing) {
       res.send(mustache.render(listingTemplate, { listingHTML: singleListing(listing)
-      }))
+       }))
     })
     .catch(function (err) {
       res.status(404).send('Listing Does Not Exist :(')
@@ -207,6 +232,16 @@ function singleListing (listing) {
           <br>
           <p>Posted by: ${listing.id} user`
 }
+
+function listingById (listing) {
+  const listingId = parseInt(listing.id)
+  return db.raw('SELECT * FROM sales WHERE user_id = ?', [listingId])
+  .then(function(result) {
+    console.log("helloooooooo")
+  }) 
+}
+console.log(listingById)
+
 
 
 // Database Queries ----------------------------------------------------------------------- //
