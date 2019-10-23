@@ -101,7 +101,6 @@ const loginTemplate = fs.readFileSync('./templates/login.mustache', 'utf8')
 const listingTemplate = fs.readFileSync('./templates/listing.mustache', 'utf8')
 const userTemplate = fs.readFileSync('./templates/user.mustache', 'utf8')
 const listingFormTemplate = fs.readFileSync('./templates/listing-form.mustache', 'utf8')
-const CG = require('./craigslistData.js') 
 
 
 //ROUTES ----------------------------------------------------------------------- //
@@ -132,34 +131,24 @@ app.get('/logout', function(req, res){
   res.redirect('/');
 });
 
-
 app.get('/user', checkAuthentication, function (req, res) {
-  let user = `${req.user.firstName} ${req.user.lastName}`
-      // res.send(mustache.render(userTemplate))
-      // console.log(listingById)
       console.log(req.user)
       let user = req.user.id
       getUserListings(user)
       .then(function (results) {
         console.log('results', results)
+
+      var userListing = `
+      <a href="/listing/${results.rows[0].id}"><li>${results.rows[0].sale_item}</li></a>
+      `
+      res.send(mustache.render(userTemplate, { userListingHTML: userListing}))
       })
-  res.send(mustache.render(userTemplate, {userName: user}))
     })
+
+
   function getUserListings(id) {
     return db.raw('SELECT * FROM sales WHERE user_id = ?', [id])
   }
-
-
-
-// app.get('/user/:id', function (req, res) {
-//   getOneListing(req.params)
-//     .then(function (listing) {
-//       res.send(mustache.render(userTemplate, { listingHTML: listingById(listing)
-//       }))
-//       console.log('sooooooooo, we are getting the listing ')
-//     })
-// })
-
 
 app.get('/listing/:id', function (req, res) {
   getOneListing(req.params)
@@ -173,8 +162,7 @@ app.get('/listing/:id', function (req, res) {
 })
 
 app.get('/newlisting', checkAuthentication, function (req, res){
-  let user = `${req.user.firstName} ${req.user.lastName}`
-  res.send(mustache.render(listingFormTemplate, {userName: user}))
+  res.send(mustache.render(listingFormTemplate))
 })
 
 app.post('/newlisting', function (req, res){
@@ -198,7 +186,7 @@ app.listen(port, function () {
 function completeRenderHomepage(allListings, res) {
   const listings = renderAllListings(allListings);
   let wholeList = `<ul class="d-flex flex-column-reverse list-unstyled" >${listings.join('')}</ul>`;
-  res.send(mustache.render(homepageTemplate, { listingsHTML: wholeList, days: CG.calendar.days, resources: CG.userResources, about: CG.aboutCraigslist, cities: CG.cities, week1: CG.calendar.weeks.w1, week2: CG.calendar.weeks.w2, week3: CG.calendar.weeks.w3, week4: CG.calendar.weeks.w4}));
+  res.send(mustache.render(homepageTemplate, { listingsHTML: wholeList }));
 }
 
 function renderAllListings(allListings) {
