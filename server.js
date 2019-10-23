@@ -134,7 +134,7 @@ app.get('/logout', function(req, res){
 
 
 app.get('/user', checkAuthentication, function (req, res) {
-  let user = `${req.user.firstName} ${req.user.lastName}`
+  let userName = `${req.user.firstName} ${req.user.lastName}`
       // res.send(mustache.render(userTemplate))
       // console.log(listingById)
       console.log(req.user)
@@ -143,7 +143,7 @@ app.get('/user', checkAuthentication, function (req, res) {
       .then(function (results) {
         console.log('results', results)
       })
-  res.send(mustache.render(userTemplate, {userName: user}))
+  res.send(mustache.render(userTemplate, {userName: userName}))
     })
   function getUserListings(id) {
     return db.raw('SELECT * FROM sales WHERE user_id = ?', [id])
@@ -306,10 +306,12 @@ function createUser(profile){
 
 
 function addListing(formData, id) {
-  let title = formData.listingTitle
-  let price = formData.listingPrice
-  let description = formData.listingDescription
-  let userid = id
-  return db.raw('INSERT INTO sales (sale_item, price, description, user_id) VALUES (?, ?, ?, ?)', [title, price, description, userid])
-    
+  const title = formData.listingTitle
+  const price = formData.listingPrice
+  const description = formData.listingDescription
+  const userid = id
+  return db.raw(`
+    INSERT INTO sales (sale_item, price, description, user_id, created_at)
+    VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+    [title, price, description, userid])
 }
