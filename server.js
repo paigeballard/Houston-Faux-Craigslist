@@ -9,6 +9,7 @@ const bodyParser = require('body-parser')
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.urlencoded())
+app.use(express.static(__dirname + '/public'))
 
 // OAuthorization ----------------------------------------------------------------------- //
 require('dotenv').config() //to hide keys
