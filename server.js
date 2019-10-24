@@ -194,12 +194,12 @@ function renderAllListings (allListings) {
     const thumbnail = allListings.rows[i].img
     const listItem = `
     <table class="table">
-    <tr>
-      <td><img class="border rounded" src="${thumbnail}"/></td>
-      <td><span class="text-secondary" style="font-size:11px; max-width:102px;">${createdDate}</span><br />$ ${price}</td>
-      <td><a href="/listing/${listing}">${item}</a></td>
-    </tr>
-  </table>
+      <tr>
+        <td><img class="border rounded" src="${thumbnail}"/></td>
+        <td><span class="text-secondary" style="font-size:11px; max-width:102px;">${createdDate}</span><br />$ ${price}</td>
+        <td><a href="/listing/${listing}">${item}</a></td>
+      </tr>
+    </table>
       `
     listings.push(listItem)
   }
