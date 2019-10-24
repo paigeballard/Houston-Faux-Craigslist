@@ -133,32 +133,29 @@ app.get('/logout', function(req, res){
 });
 
 
-app.get('/user', checkAuthentication, function (req, res) {
-  let user = `${req.user.firstName} ${req.user.lastName}`
-      // res.send(mustache.render(userTemplate))
-      // console.log(listingById)
-      console.log(req.user)
-      let user = req.user.id
-      getUserListings(user)
-      .then(function (results) {
-        console.log('results', results)
-      })
-  res.send(mustache.render(userTemplate, {userName: user}))
-    })
-  function getUserListings(id) {
-    return db.raw('SELECT * FROM sales WHERE user_id = ?', [id])
-  }
-
-
-
-// app.get('/user/:id', function (req, res) {
-//   getOneListing(req.params)
-//     .then(function (listing) {
-//       res.send(mustache.render(userTemplate, { listingHTML: listingById(listing)
-//       }))
-//       console.log('sooooooooo, we are getting the listing ')
-//     })
-// })
+  app.get('/user', checkAuthentication, function (req, res) {
+    let userFullName = `${req.user.firstName} ${req.user.lastName}`
+        // res.send(mustache.render(userTemplate))
+        // console.log(listingById)
+        console.log(req.user)
+        let user = req.user.id
+        getUserListings(user)
+        .then(function (results) {
+          console.log('results', results)
+  
+          var userListing = `
+       <a href="/listing/${results.rows[0].id}"><li>${results.rows[0].sale_item}</li></a>
+       `
+       res.send(mustache.render(userTemplate, { userListingHTML: userListing}))
+         })
+         res.send(mustache.render(userTemplate, {userName: userFullName}))
+        })
+    
+    
+    function getUserListings(id) {
+      return db.raw('SELECT * FROM sales WHERE user_id = ?', [id])
+    }
+  
 
 
 app.get('/listing/:id', function (req, res) {
