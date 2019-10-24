@@ -22,28 +22,20 @@
         </div>
     </nav>
     
-   {{! <div class="row">
-        <div class="col">
-          <h2 class="text-center"><a href="/newlisting">create a posting</a></h2>
-        </div>
-      </div>
-     }}
+    
 <div class="card" style="width: 100rem;">
   <div class="card-body">
-    <h5 class="card-title">Welcome Back {{{req.user.firstName}}}!</h5>
-    <h6 class="card-subtitle mb-2 text-muted">Postings</h6>
+    <h5 class="card-title">Welcome back, {{{userFirstName}}}.</h5>
+    <h6 class="card-subtitle mb-2 text-muted">You have {{{postingNum}}} listings.</h6>
     <p class="card-text">
-              <ul>{{{userListingHTML}}}</ul>  
-      
+        <ul>{{{userListingHTML}}}</ul>       
     </p>
-    {{! <a href="/newlisting" class="card-link">Create New Post</a> }}
-    {{! <a href="#" class="card-link">Another link</a> }}
   </div>
 </div>
 <br>
 <footer>
 <div class="text-center">
-      <a href="/newlisting" class="btn btn-primary">Create new posting</a>
+    <a href="/newlisting" class="btn btn-primary">Create a listing</a>
 </div>
 </footer>
     

@@ -7,6 +7,8 @@ const fs = require('fs')                // for templating
 const mustache = require('mustache')    // for templating
 
 const bodyParser = require('body-parser')
+const CG = require('./craigslistData.js') 
+
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.urlencoded())
@@ -45,7 +47,6 @@ passport.deserializeUser(function (obj, cb) { // runs every time you go to new p
 
       return cb(err, null)
     })
-  // cb(null, obj);
 })
 
 // GITHUB Strategy
@@ -68,27 +69,26 @@ function (accessToken, refreshToken, profile, cb) {
 ))
 
 // FACEBOOK Strategy
-
 const FacebookStrategy = require('passport-facebook').Strategy
 
 passport.use(new FacebookStrategy({
-  clientID: process.env.FACEBOOK_APP_ID,
-  clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: '/auth/facebook/callback',
-  profileFields: ['id', 'emails', 'name']
-},
-function (accessToken, refreshToken, profile, cb) {
-  createUser(profile)
-    .then(function (value) {
-      console.log('fb strategy:', value)
-      if (value.name === 'error') { console.log('user already exists in database, no need to add')}
-      else { console.log('new user created in database') }
-    })       
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: "/auth/facebook/callback",
+    profileFields: ['id', 'emails', 'name'] 
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    createUser(profile)
+      .then(function(value){
+        if (value.name === 'error'){console.log('user already exists in database, no need to add')}
+        else{console.log('new user created in database')}
+      })       
+  return cb(null, profile);
+  }
 
-  return cb(null, profile)
-}
 
-))
+
+
 
 function checkAuthentication (req, res, next) {
   if (req.isAuthenticated()) {
@@ -104,7 +104,6 @@ const loginTemplate = fs.readFileSync('./templates/login.mustache', 'utf8')
 const listingTemplate = fs.readFileSync('./templates/listing.mustache', 'utf8')
 const userTemplate = fs.readFileSync('./templates/user.mustache', 'utf8')
 const listingFormTemplate = fs.readFileSync('./templates/listing-form.mustache', 'utf8')
-const CG = require('./craigslistData.js') 
 
 // ROUTES ----------------------------------------------------------------------- //
 
@@ -130,26 +129,28 @@ app.get('/login', function (req, res) {
   res.send(mustache.render(loginTemplate))
 })
 
-app.get('/logout', function (req, res) {
-  req.logout()
-  res.redirect('/')
-})
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
+
 
 app.get('/user', checkAuthentication, function (req, res) {
-
-  let user = `${req.user.firstName} ${req.user.lastName}`
-      console.log(req.user)
-      let user = req.user.id
-      getUserListings(user)
-      .then(function (results) {
-        console.log('results', results)
-      })
-  res.send(mustache.render(userTemplate, {userName: user}))
-    })
-  function getUserListings(id) {
-    return db.raw('SELECT * FROM sales WHERE user_id = ?', [id])
-  }
-
+  let userFullName = `${req.user.firstName} ${req.user.lastName}`
+  let userID = req.user.id
+      getUserListings(userID)
+        .then(function (results) {
+          let userlistingArr = results.rows
+          let userAllListings =[];
+          let userAllListingCount = results.rows.length
+          userlistingArr.forEach(listing => {
+            userListing = `<a href="/listing/${listing.id}"><li>${listing.sale_item}</li></a>`  
+            userAllListings.push(userListing)
+          });          
+        res.send(mustache.render(userTemplate, { userListingHTML: userAllListings.join(''), userName: userFullName, userFirstName: req.user.firstName, postingNum: userAllListingCount  }))
+        })
+})
+  
 
 
 app.get('/listing/:id', function (req, res) {
@@ -169,15 +170,17 @@ app.get('/newlisting', checkAuthentication, function (req, res) {
   res.send(mustache.render(listingFormTemplate, { userName: user }))
 })
 
-app.post('/newlisting', function (req, res) {
-  console.log('req.user', req.user)
+app.post('/newlisting', function (req, res){
+  //console.log('req.user', req.user)
+
   let userId = req.user.id    
-  console.log('req.user.id', req.user.id)                
+  //console.log('req.user.id', req.user.id)                
   addListing(req.body, userId)    
-    .then(function (results) { 
-      if (results) { res.send('new listing made') }
-      else { res.send('something went wrong') }
-    })  
+    .then(function(results){ 
+      if (results) {res.redirect('/user')}
+      else {res.send('something went wrong')}
+    })
+   
 
 })
 
@@ -185,9 +188,12 @@ app.listen(port, function () {
   console.log('Listening on port ' + port + ' 👍')
 })
 
-function completeRenderHomepage (allListings, res) {
-  const listings = renderAllListings(allListings)
-  let wholeList = `<ul class="d-flex flex-column-reverse list-unstyled" >${listings.join('')}</ul>`
+
+
+function completeRenderHomepage(allListings, res) {
+  const listings = renderAllListings(allListings);
+  let wholeList = `<ul class="d-flex flex-column-reverse list-unstyled" >${listings.join('')}</ul>`;
+
   res.send(mustache.render(homepageTemplate, { listingsHTML: wholeList, days: CG.calendar.days, resources: CG.userResources, about: CG.aboutCraigslist, cities: CG.cities, week1: CG.calendar.weeks.w1, week2: CG.calendar.weeks.w2, week3: CG.calendar.weeks.w3, week4: CG.calendar.weeks.w4}));
 
 }
@@ -259,7 +265,11 @@ function getAllListings () {
   return db.raw(getAllListingsQuery)
 }
 
-function findUser (userObj) {
+function getUserListings(id) {
+  return db.raw('SELECT * FROM sales WHERE user_id = ?', [id])
+}
+
+function findUser(userObj){
   let email = userObj._json.email
   // console.log('email:', email)
   return db.raw('SELECT * FROM users WHERE email = ?', [email])  
@@ -298,9 +308,10 @@ function addListing (formData, id) {
   const price = formData.listingPrice
   const description = formData.listingDescription
   const userid = id
+  const listimgImg = 'https://loremflickr.com/320/240'
   return db.raw(`
-    INSERT INTO sales (sale_item, price, description, user_id, created_at)
-    VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`,
-  [title, price, description, userid])
+    INSERT INTO sales (sale_item, price, description, user_id, created_at, img)
+    VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, ?)`,
+    [title, price, description, userid, listimgImg])
 }
 
