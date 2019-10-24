@@ -6,6 +6,8 @@ const port = 3000;
 const fs = require('fs')                //for templating
 const mustache = require('mustache')    //for templating
 const bodyParser = require('body-parser')
+const CG = require('./craigslistData.js') 
+
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.urlencoded())
@@ -44,7 +46,6 @@ passport.deserializeUser(function(obj, cb) { //runs every time you go to new pag
     .catch(function(err){ 
       return cb(err, null)
     })
-  // cb(null, obj);
 })
 
 //GITHUB Strategy
@@ -77,7 +78,6 @@ passport.use(new FacebookStrategy({
   function(accessToken, refreshToken, profile, cb) {
     createUser(profile)
       .then(function(value){
-        console.log('fb strategy:', value)
         if (value.name === 'error'){console.log('user already exists in database, no need to add')}
         else{console.log('new user created in database')}
       })       
@@ -101,7 +101,6 @@ const loginTemplate = fs.readFileSync('./templates/login.mustache', 'utf8')
 const listingTemplate = fs.readFileSync('./templates/listing.mustache', 'utf8')
 const userTemplate = fs.readFileSync('./templates/user.mustache', 'utf8')
 const listingFormTemplate = fs.readFileSync('./templates/listing-form.mustache', 'utf8')
-const CG = require('./craigslistData.js') 
 
 
 //ROUTES ----------------------------------------------------------------------- //
@@ -133,31 +132,22 @@ app.get('/logout', function(req, res){
 });
 
 
-
-  app.get('/user', checkAuthentication, function (req, res) {
-    let userFullName = `${req.user.firstName} ${req.user.lastName}`
-        // res.send(mustache.render(userTemplate))
-        // console.log(listingById)
-        console.log(req.user)
-        let user = req.user.id
-        getUserListings(user)
+app.get('/user', checkAuthentication, function (req, res) {
+  let userFullName = `${req.user.firstName} ${req.user.lastName}`
+  let userID = req.user.id
+      getUserListings(userID)
         .then(function (results) {
-          console.log('results', results)
-  
-          var userListing = `
-       <a href="/listing/${results.rows[0].id}"><li>${results.rows[0].sale_item}</li></a>
-       `
-       res.send(mustache.render(userTemplate, { userListingHTML: userListing}))
-         })
-         res.send(mustache.render(userTemplate, {userName: userFullName}))
+          let userlistingArr = results.rows
+          let userAllListings =[];
+          let userAllListingCount = results.rows.length
+          userlistingArr.forEach(listing => {
+            userListing = `<a href="/listing/${listing.id}"><li>${listing.sale_item}</li></a>`  
+            userAllListings.push(userListing)
+          });          
+        res.send(mustache.render(userTemplate, { userListingHTML: userAllListings.join(''), userName: userFullName, userFirstName: req.user.firstName, postingNum: userAllListingCount  }))
         })
-    
-    
-    function getUserListings(id) {
-      return db.raw('SELECT * FROM sales WHERE user_id = ?', [id])
-    }
+})
   
-
 
 app.get('/listing/:id', function (req, res) {
   getOneListing(req.params)
@@ -176,22 +166,22 @@ app.get('/newlisting', checkAuthentication, function (req, res){
 })
 
 app.post('/newlisting', function (req, res){
-  console.log('req.user', req.user)
+  //console.log('req.user', req.user)
   let userId = req.user.id    
-  console.log('req.user.id', req.user.id)                
+  //console.log('req.user.id', req.user.id)                
   addListing(req.body, userId)    
     .then(function(results){ 
-      if (results) {res.send('new listing made')}
+      if (results) {res.redirect('/user')}
       else {res.send('something went wrong')}
     })
    
 })
 
-
-
 app.listen(port, function () {
   console.log('Listening on port ' + port + ' 👍')
 })
+
+
 
 function completeRenderHomepage(allListings, res) {
   const listings = renderAllListings(allListings);
@@ -266,6 +256,10 @@ function getAllListings () {
   return db.raw(getAllListingsQuery)
 }
 
+function getUserListings(id) {
+  return db.raw('SELECT * FROM sales WHERE user_id = ?', [id])
+}
+
 function findUser(userObj){
   let email = userObj._json.email
   //console.log('email:', email)
@@ -308,8 +302,9 @@ function addListing(formData, id) {
   const price = formData.listingPrice
   const description = formData.listingDescription
   const userid = id
+  const listimgImg = 'https://loremflickr.com/320/240'
   return db.raw(`
-    INSERT INTO sales (sale_item, price, description, user_id, created_at)
-    VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`,
-    [title, price, description, userid])
+    INSERT INTO sales (sale_item, price, description, user_id, created_at, img)
+    VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, ?)`,
+    [title, price, description, userid, listimgImg])
 }
