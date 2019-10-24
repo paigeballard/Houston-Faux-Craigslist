@@ -204,20 +204,29 @@ function renderAllListings (allListings) {
   // finally, previous and next links need to be added to the html.  how to use page number to make those.
   const listings = []
   for (var i = 0; i < allListings.rows.length; i++) {
-    let item = allListings.rows[i].sale_item
-    let price = allListings.rows[i].price
-    let listing = allListings.rows[i].id
-    let createdDate = allListings.rows[i].created_at
-    let thumbnail = allListings.rows[i].img
-    let listItem = `<li class="price">$${price}</li>
+    const item = allListings.rows[i].sale_item
+    const price = allListings.rows[i].price
+    const listing = allListings.rows[i].id
+    const createdDate = allListings.rows[i].created_at
+    const thumbnail = allListings.rows[i].img
+    const listItem = `
+    <table class="table">
+      <tr>
+        <td><img class="border rounded" src="${thumbnail}"/></td>
+        <td><span class="text-secondary" style="font-size:11px; max-width:102px;">${createdDate}</span><br />$ ${price}</td>
+        <td><a href="/listing/${listing}">${item}</a></td>
+      </tr>
+    </table>
 
-                      <li style="font-size: 1em;"><a href="/listing/${listing}">
-                      <img class="border rounded"src="${thumbnail}"/><span class="text-secondary d-inline-block text-truncate" style="font-size:11px; max-width:102px;">${createdDate}</span> ${item}</a></li>
       `
     listings.push(listItem)
   }
   return listings
 }
+
+// <li class="price">$${price}</li>
+//                       <li style="font-size: 1em;"><a href="/listing/${listing}">
+//                       <img class="border rounded"src="${thumbnail}"/><span class="text-secondary d-inline-block text-truncate" style="font-size:11px; max-width:102px;">${createdDate}</span> ${item}</a></li>
 
 // HTML Rendering ----------------------------------------------------------------------- //
 
@@ -245,6 +254,7 @@ console.log(listingById)
 const getAllListingsQuery = `
   SELECT * 
   FROM sales
+  ORDER BY created_at ASC
 `
 
 function getOneListing (listing) {
