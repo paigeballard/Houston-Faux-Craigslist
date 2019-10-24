@@ -84,7 +84,7 @@ passport.use(new FacebookStrategy({
         else{console.log('new user created in database')}
       })       
   return cb(null, profile);
-  }
+  }))
 
 
 
