@@ -3,8 +3,9 @@ const db = require('knex')(dbConfigs.development)
 const express = require('express')
 const app = express()
 const port = 3000
-const fs = require('fs') // for templating
-const mustache = require('mustache') // for templating
+const fs = require('fs')                // for templating
+const mustache = require('mustache')    // for templating
+
 const bodyParser = require('body-parser')
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -18,16 +19,18 @@ const passport = require('passport')
 const GitHubStrategy = require('passport-github').Strategy
 
 app.set('trust proxy', 1) // trust first proxy
-app.use(session({ // session config for Passport
+app.use(session({         // session config for Passport
+
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true
 }))
 
-app.use(passport.initialize()) // initialize Passport module
+app.use(passport.initialize()) //  initialize Passport module
 app.use(passport.session()) // restore session
 
-//* store session into database *//
+// *store session into database *//
+
 
 passport.serializeUser(function (user, cb) { // first time login succesfuly, user gets saved in session object
   cb(null, user)
@@ -36,9 +39,10 @@ passport.serializeUser(function (user, cb) { // first time login succesfuly, use
 passport.deserializeUser(function (obj, cb) { // runs every time you go to new page during session
   findUser(obj)
     .then(function (results, err) { // findUser returns an object {id:'id', firstName: 'first name',  lastName: 'last ',  email: 'email' }
-      cb(null, results)
+      cb(null, results)      
     })
-    .catch(function (err) {
+    .catch(function (err) { 
+
       return cb(err, null)
     })
   // cb(null, obj);
@@ -54,14 +58,17 @@ passport.use(new GitHubStrategy({
 function (accessToken, refreshToken, profile, cb) {
   createUser(profile)
     .then(function (value) {
-      if (value.name === 'error') { console.log('user already exists in database, no need to add') } else { console.log('new user created in database') }
-    })
+      if (value.name === 'error') { console.log( 'user already exists in database, no need to add') }
+      else { console.log('new user created in database') }
+    })      
+
   return cb(null, profile)
 }
 
 ))
 
 // FACEBOOK Strategy
+
 const FacebookStrategy = require('passport-facebook').Strategy
 
 passport.use(new FacebookStrategy({
@@ -74,8 +81,10 @@ function (accessToken, refreshToken, profile, cb) {
   createUser(profile)
     .then(function (value) {
       console.log('fb strategy:', value)
-      if (value.name === 'error') { console.log('user already exists in database, no need to add') } else { console.log('new user created in database') }
-    })
+      if (value.name === 'error') { console.log('user already exists in database, no need to add')}
+      else { console.log('new user created in database') }
+    })       
+
   return cb(null, profile)
 }
 
@@ -95,7 +104,7 @@ const loginTemplate = fs.readFileSync('./templates/login.mustache', 'utf8')
 const listingTemplate = fs.readFileSync('./templates/listing.mustache', 'utf8')
 const userTemplate = fs.readFileSync('./templates/user.mustache', 'utf8')
 const listingFormTemplate = fs.readFileSync('./templates/listing-form.mustache', 'utf8')
-const CG = require('./craigslistData.js')
+const CG = require('./craigslistData.js') 
 
 // ROUTES ----------------------------------------------------------------------- //
 
@@ -106,13 +115,15 @@ app.get('/', function (req, res) {
     })
 })
 
-app.get('/auth/github', passport.authenticate('github')) // redirects to github.com
+app.get('/auth/github', passport.authenticate('github'))   // redirects to github.com
+
 
 app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login', successRedirect: '/user' }))
 
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }))
 
-app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login', successRedirect: '/user' })
+app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' , successRedirect: '/user' })
+
 )
 
 app.get('/login', function (req, res) {
@@ -125,6 +136,7 @@ app.get('/logout', function (req, res) {
 })
 
 app.get('/user', checkAuthentication, function (req, res) {
+
   let user = `${req.user.firstName} ${req.user.lastName}`
       console.log(req.user)
       let user = req.user.id
@@ -143,26 +155,30 @@ app.get('/user', checkAuthentication, function (req, res) {
 app.get('/listing/:id', function (req, res) {
   getOneListing(req.params)
     .then(function (listing) {
-      res.send(mustache.render(listingTemplate, { listingHTML: singleListing(listing) }))
+      res.send(mustache.render(listingTemplate, { listingHTML: singleListing(listing)
+      }))
     })
     .catch(function (err) {
-      res.status(err).send('Listing Does Not Exist :(')
-    })
+        res.status(404).send('Listing Does Not Exist :(')
+})
 })
 
 app.get('/newlisting', checkAuthentication, function (req, res) {
-  const user = `${req.user.firstName} ${req.user.lastName}`
+  let user = `${req.user.firstName} ${req.user.lastName}`
+
   res.send(mustache.render(listingFormTemplate, { userName: user }))
 })
 
 app.post('/newlisting', function (req, res) {
   console.log('req.user', req.user)
-  const userId = req.user.id
-  console.log('req.user.id', req.user.id)
-  addListing(req.body, userId)
-    .then(function (results) {
-      if (results) { res.send('new listing made') } else { res.send('something went wrong') }
-    })
+  let userId = req.user.id    
+  console.log('req.user.id', req.user.id)                
+  addListing(req.body, userId)    
+    .then(function (results) { 
+      if (results) { res.send('new listing made') }
+      else { res.send('something went wrong') }
+    })  
+
 })
 
 app.listen(port, function () {
@@ -171,8 +187,9 @@ app.listen(port, function () {
 
 function completeRenderHomepage (allListings, res) {
   const listings = renderAllListings(allListings)
-  const wholeList = `<ul class="d-flex flex-column-reverse list-unstyled" >${listings.join('')}</ul>`
-  res.send(mustache.render(homepageTemplate, { listingsHTML: wholeList, days: CG.calendar.days, resources: CG.userResources, about: CG.aboutCraigslist, cities: CG.cities, week1: CG.calendar.weeks.w1, week2: CG.calendar.weeks.w2, week3: CG.calendar.weeks.w3, week4: CG.calendar.weeks.w4 }))
+  let wholeList = `<ul class="d-flex flex-column-reverse list-unstyled" >${listings.join('')}</ul>`
+  res.send(mustache.render(homepageTemplate, { listingsHTML: wholeList, days: CG.calendar.days, resources: CG.userResources, about: CG.aboutCraigslist, cities: CG.cities, week1: CG.calendar.weeks.w1, week2: CG.calendar.weeks.w2, week3: CG.calendar.weeks.w3, week4: CG.calendar.weeks.w4}));
+
 }
 
 function renderAllListings (allListings) {
@@ -181,12 +198,13 @@ function renderAllListings (allListings) {
   // finally, previous and next links need to be added to the html.  how to use page number to make those.
   const listings = []
   for (var i = 0; i < allListings.rows.length; i++) {
-    const item = allListings.rows[i].sale_item
-    const price = allListings.rows[i].price
-    const listing = allListings.rows[i].id
-    const createdDate = allListings.rows[i].created_at
-    const thumbnail = allListings.rows[i].img
-    const listItem = `<li class="price">$${price}</li>
+    let item = allListings.rows[i].sale_item
+    let price = allListings.rows[i].price
+    let listing = allListings.rows[i].id
+    let createdDate = allListings.rows[i].created_at
+    let thumbnail = allListings.rows[i].img
+    let listItem = `<li class="price">$${price}</li>
+
                       <li style="font-size: 1em;"><a href="/listing/${listing}">
                       <img class="border rounded"src="${thumbnail}"/><span class="text-secondary d-inline-block text-truncate" style="font-size:11px; max-width:102px;">${createdDate}</span> ${item}</a></li>
       `
@@ -210,9 +228,9 @@ function singleListing (listing) {
 function listingById (listing) {
   const listingId = parseInt(listing.id)
   return db.raw('SELECT * FROM sales WHERE user_id = ?', [listingId])
-    .then(function (result) {
-      console.log('helloooooooo')
-    })
+    .then(function (result) {  
+}) 
+
 }
 console.log(listingById)
 
@@ -233,7 +251,8 @@ function getOneListing (listing) {
 
       console.log(results.rows[0])
       return results.rows[0]
-    })
+})
+
 }
 
 function getAllListings () {
@@ -241,19 +260,23 @@ function getAllListings () {
 }
 
 function findUser (userObj) {
-  const email = userObj._json.email
-  return db.raw('SELECT * FROM users WHERE email = ?', [email])
+  let email = userObj._json.email
+  // console.log('email:', email)
+  return db.raw('SELECT * FROM users WHERE email = ?', [email])  
     .then(function (results) {
-      if (results.rows.length === 0) { throw 'error: user not in database' } else { return results.rows[0] } //eslint-disable-line
-    })
+      if (results.rows.length === 0) { throw 'error: user not in database' }
+      else { return results.rows[0] }
+})  
 }
 
 function createUser (profile) {
-  const email = profile._json.email
+  let email = profile._json.email
+
   let firstName
   let lastName
 
   if (profile._json.name) { // object structure for Github Strategy
+
     const fullName = profile._json.name.split(' ')
     firstName = fullName[0]
     if (fullName.length > 2) { lastName = fullName[1] + '' + fullName[2] } else { lastName = fullName[1] }
@@ -280,3 +303,4 @@ function addListing (formData, id) {
     VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`,
   [title, price, description, userid])
 }
+
