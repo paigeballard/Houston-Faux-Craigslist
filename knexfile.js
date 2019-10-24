@@ -6,7 +6,7 @@ module.exports = {
     client: 'pg',
     connection: {
       database: 'fauxcraigslist',
-      user:  'postgres',
+      user: 'postgres'
     },
     migrations: {
       directory: './db/migrations'
@@ -17,12 +17,11 @@ module.exports = {
     useNullAsDefault: true
   },
 
-
   production: {
     client: 'postgresql',
     connection: {
       database: 'my_db',
-      user:     'username',
+      user: 'username',
       password: 'password'
     },
     pool: {
@@ -34,4 +33,4 @@ module.exports = {
     }
   }
 
-};
+}
