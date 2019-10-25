@@ -3,6 +3,8 @@
 
 https://travis-ci.org/paigeballard/Houston-Faux-Craigslist.svg?branch=master
 
+[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
+
 
 
 This is our Phase 2 project for Digital Crafts. We are created a Fuax Houston Craigslist where you can post stuff to sell. 
