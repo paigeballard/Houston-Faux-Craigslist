@@ -133,7 +133,7 @@ app.get('/user', checkAuthentication, function (req, res) {
       const userAllListings = []
       const userAllListingCount = results.rows.length
       userlistingArr.forEach(listing => {
-        userListing = `<a href="/listing/${listing.id}"><li>${listing.sale_item}</li></a>`
+        const userListing = `<a href="/listing/${listing.id}"><li>${listing.sale_item}</li></a>`
         userAllListings.push(userListing)
       })
       res.send(mustache.render(userTemplate, { userListingHTML: userAllListings.join(''), userName: userFullName, userFirstName: req.user.firstName, postingNum: userAllListingCount }))
@@ -146,7 +146,7 @@ app.get('/listing/:id', function (req, res) {
       res.send(mustache.render(listingTemplate, { listingHTML: singleListing(listing) }))
     })
     .catch(function (err) {
-      res.status(404).send('There are no more listings.  <a href="/">Click Here</a> to go back to homepage')
+      res.status(err).send('There are no more listings.  <a href="/">Click Here</a> to go back to homepage')
     })
 })
 
@@ -264,7 +264,7 @@ function findUser (userObj) {
   // console.log('email:', email)
   return db.raw('SELECT * FROM users WHERE email = ?', [email])
     .then(function (results) {
-      if (results.rows.length === 0) { throw 'error: user not in database' } else { return results.rows[0] }
+      if (results.rows.length === 0) { throw 'error: user not in database' } else { return results.rows[0] } //eslint-disable-line
     })
 }
 
