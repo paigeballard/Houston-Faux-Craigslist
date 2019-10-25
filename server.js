@@ -160,7 +160,7 @@ app.get('/listing/:id', function (req, res) {
       }))
     })
     .catch(function (err) {
-        res.status(404).send('Listing Does Not Exist :(')
+        res.status(404).send(`There are no more listings.  <a href="/">Click Here</a> to go back to homepage`)
 })
 })
 
@@ -207,13 +207,13 @@ function renderAllListings (allListings) {
     const item = allListings.rows[i].sale_item
     const price = allListings.rows[i].price
     const listing = allListings.rows[i].id
-    const createdDate = allListings.rows[i].created_at
+    const createdDate = allListings.rows[i].created_at.toDateString()
     const thumbnail = allListings.rows[i].img
     const listItem = `
     <table class="table">
       <tr>
-        <td><img class="border rounded" src="${thumbnail}"/></td>
-        <td><span class="text-secondary" style="font-size:11px; max-width:102px;">${createdDate}</span><br />$ ${price}</td>
+        <td style="width:10%;"><img class="border rounded" src="${thumbnail}"/></td>
+        <td style="width:20%;"><span class="text-secondary" style="font-size:11px; max-width:102px;">${createdDate}</span><br />$ ${price}</td>
         <td><a href="/listing/${listing}">${item}</a></td>
       </tr>
     </table>
@@ -224,20 +224,23 @@ function renderAllListings (allListings) {
   return listings
 }
 
-// <li class="price">$${price}</li>
-//                       <li style="font-size: 1em;"><a href="/listing/${listing}">
-//                       <img class="border rounded"src="${thumbnail}"/><span class="text-secondary d-inline-block text-truncate" style="font-size:11px; max-width:102px;">${createdDate}</span> ${item}</a></li>
 
 // HTML Rendering ----------------------------------------------------------------------- //
 
 function singleListing (listing) {
   console.log('this is the', listing)
-  return `<h2>${listing.sale_item} - $ ${listing.price}</h2>
+
+  return `
+          <div class="d-flex justify-content-center buttons container">
+            <a href="${listing.id -1}" id="prev"> prev </a>
+            <a href="${listing.id +1}" id="next"> next </a>
+          </div>
+          <h2>${listing.sale_item} - $ ${listing.price}</h2>
           <img src="${listing.img}"/>
           <p>${listing.description}</p>
           <br>
           <br>
-          <p>Posted by: ${listing.id} user`
+          <p>Posted on: ${listing.created_at.toDateString()}`
 }
 
 function listingById (listing) {
