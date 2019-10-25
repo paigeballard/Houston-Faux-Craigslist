@@ -1,6 +1,7 @@
 # JavaScript Standard Style
 [![Build Status](https://travis-ci.org/paigeballard/Houston-Faux-Craigslist.svg?branch=master)](https://travis-ci.org/paigeballard/Houston-Faux-Craigslist)
 https://travis-ci.org/paigeballard/Houston-Faux-Craigslist.svg?branch=master
+!https://travis-ci.org/paigeballard/Houston-Faux-Craigslist.svg?branch=master!:https://travis-ci.org/paigeballard/Houston-Faux-Craigslist
 
 
 This is our Phase 2 project for Digital Crafts. We are created a Fuax Houston Craigslist where you can post stuff to sell. 
