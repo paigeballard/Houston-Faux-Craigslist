@@ -1,3 +1,9 @@
+# JavaScript Standard Style
+[![travis][travis-image]][travis-url]
+[![npm][npm-image]][npm-url]
+[![downloads][downloads-image]][downloads-url]
+
+
 This is our Phase 2 project for Digital Crafts. We are created a Fuax Houston Craigslist where you can post stuff to sell. 
 
 
