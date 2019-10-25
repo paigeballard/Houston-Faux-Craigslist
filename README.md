@@ -5,9 +5,7 @@
 This is our Phase 2 project for Digital Crafts. We are created a Fuax Houston Craigslist where you can post stuff to sell. 
 
 
-| [Bootstrap](https://getbootstrap.com/) | Framework for typography, forms, buttons, navigation and other interface components |
-| 
-| [Travis CI](https://travis-ci.org/) | Sync Github projects to continually test and deploy projects |
+| [Bootstrap](https://getbootstrap.com/) | Framework for typography, forms, buttons, navigation and other interface components | [Travis CI](https://travis-ci.org/) | Sync Github projects to continually test and deploy projects |
 | 
 
 **Available Scripts**
