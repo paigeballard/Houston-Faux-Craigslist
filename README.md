@@ -1,6 +1,7 @@
 
 [![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+https://travis-ci.com/paigeballard/Houston-Faux-Craigslist.svg?branch=master
 [![Build Status](https://travis-ci.com/paigeballard/Houston-Faux-Craigslist.svg?branch=master)](https://travis-ci.com/paigeballard/Houston-Faux-Craigslist)
 
 This is our Phase 2 project for Digital Crafts. We created catslist, a site like craigslist where you post sale listings.
