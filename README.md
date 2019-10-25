@@ -1,7 +1,4 @@
 # JavaScript Standard Style
-[![travis][travis-image]][travis-url]
-[![npm][npm-image]][npm-url]
-[![downloads][downloads-image]][downloads-url]
 [![Build Status](https://travis-ci.org/paigeballard/Houston-Faux-Craigslist.svg?branch=master)](https://travis-ci.org/paigeballard/Houston-Faux-Craigslist)
 
 
