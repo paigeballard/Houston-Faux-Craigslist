@@ -3,5 +3,5 @@ node_js:
  - "stable"
  - "iojs"
  
-servises:
+services:
  - postgres
