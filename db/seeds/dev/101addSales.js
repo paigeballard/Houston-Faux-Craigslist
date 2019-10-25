@@ -23,7 +23,7 @@ exports.seed = function (knex) {
     .then(function (userIds) {
       console.log(userIds)
       const fakeSales = []
-      const desiredFakeSales = 100
+      const desiredFakeSales = 20
       for (let i = 0; i < desiredFakeSales; i++) {
         fakeSales.push(createFakeSale(userIds))
       }
