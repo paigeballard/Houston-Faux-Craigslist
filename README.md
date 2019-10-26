@@ -11,7 +11,7 @@ This is our Phase 2 project for Digital Crafts. We created catslist, a site like
 1. Agreed on Craigslist 
 2. Researched layout and routes of Craigslist
 3. Divided up responsibilities 
-4. Created database, Oauth abd routes
+4. Created database, Oauth and routes
 5. Started testing and debugging 
 6. Meet frequently to discuss next steps and changes
 
