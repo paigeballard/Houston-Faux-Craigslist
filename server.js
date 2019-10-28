@@ -8,6 +8,7 @@ const mustache = require('mustache') // for templating
 
 const bodyParser = require('body-parser')
 const CG = require('./craigslistData.js')
+const queries = require('./db/queries')
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.urlencoded())
@@ -232,11 +233,7 @@ console.log(listingById)
 
 // Database Queries ----------------------------------------------------------------------- //
 
-const getAllListingsQuery = `
-  SELECT * 
-  FROM sales
-  ORDER BY created_at ASC
-`
+
 
 function getOneListing (listing) {
   const listingId = parseInt(listing.id)
@@ -252,7 +249,7 @@ function getOneListing (listing) {
 }
 
 function getAllListings () {
-  return db.raw(getAllListingsQuery)
+  return db.raw(queries.getAllListingsQuery)
 }
 
 function getUserListings (id) {
