@@ -233,8 +233,6 @@ console.log(listingById)
 
 // Database Queries ----------------------------------------------------------------------- //
 
-
-
 function getOneListing (listing) {
   const listingId = parseInt(listing.id)
   return db.raw('SELECT * FROM sales WHERE id = ?', [listingId])
