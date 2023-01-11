@@ -14,7 +14,7 @@
     "express-session": "^1.17.0",
     "faker": "^4.1.0",
     "fs": "0.0.1-security",
-    "knex": "^0.19.5",
+    "knex": "^2.4.0",
     "mustache": "^3.1.0",
     "nodemon": "^1.19.4",
     "passport": "^0.4.0",
